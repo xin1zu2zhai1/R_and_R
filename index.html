@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruins & Revenant</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .logo-header {
+            margin-bottom: 20px;
+            text-align: center;
+            max-width: 300px; /* ロゴの最大幅を小さく */
+        }
+        
+        .logo-image {
+            max-width: 100%;
+            width: 300px; /* ロゴの幅を指定 */
+            height: auto;
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px #000;
+            display: none; /* タイトルを非表示にし、画像ロゴを使用 */
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .game-info {
+            margin-bottom: 10px;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        /* マップエリアを横並びに */
+        .map-area {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(15, 30px);
+            grid-template-rows: repeat(15, 30px);
+            gap: 1px;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+        
+        /* メッセージログをマップの横に配置 */
+        .message-log {
+            flex: 1;
+            height: auto;
+            max-height: 470px; /* マップの高さに合わせる（15行 x 30px + パディングとギャップ） */
+            overflow-y: auto;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+            min-width: 200px;
+        }
+        
+        .cell {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background-color: #333;
+            color: white;
+            user-select: none;
+        }
+        
+        .wall {
+            background-color: #555;
+        }
+        
+        .player {
+            background-color: #4a90e2;
+        }
+        
+        .monster {
+            background-color: #e25a4a;
+        }
+        
+        .item {
+            background-color: #4ae25a;
+        }
+        
+        .stairs {
+            background-color: #e2c94a;
+        }
+        
+        .crown {
+            background-color: #ffd700;
+            color: #000 !important;
+        }
+        
+        .hidden {
+            background-color: #111;
+            color: #444;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .control-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            margin: 0 5px;
+            background-color: #444;
+            border: 1px solid #666;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background-color: #555;
+        }
+        
+        .status-box {
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        
+        .hp {
+            background-color: #e25a4a;
+        }
+        
+        .attack {
+            background-color: #4a90e2;
+        }
+        
+        .defense {
+            background-color: #4ae25a;
+        }
+        
+        .floor {
+            background-color: #e2c94a;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .inventory-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 80%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #444;
+            border-radius: 3px;
+        }
+        
+        .use-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .use-btn:hover {
+            background-color: #3a80d2;
+        }
+        
+        .inventory-btn {
+            background-color: #444;
+            color: white;
+            border: 1px solid #666;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .inventory-btn:hover {
+            background-color: #555;
+        }
+        
+        .battle-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .battle-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .battle-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .battle-entity {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            width: 45%;
+        }
+        
+        .player-battle {
+            background-color: #4a90e2;
+        }
+        
+        .monster-battle {
+            background-color: #e25a4a;
+        }
+        
+        .battle-log {
+            height: 150px;
+            overflow-y: auto;
+            margin: 15px 0;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .battle-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .battle-btn:hover {
+            background-color: #3a80d2;
+        }
+        
+        .battle-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .battle-result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .remembered {
+            opacity: 0.6;
+        }
+        
+        .battle-hint {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #aaa;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .path {
+            background-color: #486e29; /* デバッグ用 */
+        }
+        
+        .monster-image-container {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .monster-image-container svg {
+            width: 80px;
+            height: 80px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .monster-attack {
+            animation: monsterAttackAnim 0.5s ease-in-out;
+        }
+
+        .monster-hit {
+            animation: monsterHitAnim 0.5s ease-in-out;
+        }
+
+        .monster-defeat {
+            animation: monsterDefeatAnim 1s ease-in-out forwards;
+        }
+
+        @keyframes monsterAttackAnim {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(5px) rotate(-5deg); }
+            75% { transform: translateX(-5px) rotate(5deg); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes monsterHitAnim {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            50% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes monsterDefeatAnim {
+            0% { transform: translateY(0); opacity: 1; }
+            20% { transform: translateY(-10px) rotate(5deg); opacity: 0.8; }
+            40% { transform: translateY(-5px) rotate(-5deg); opacity: 0.6; }
+            60% { transform: translateY(-15px) rotate(10deg); opacity: 0.4; }
+            80% { transform: translateY(-10px) rotate(-10deg); opacity: 0.2; }
+            100% { transform: translateY(-20px); opacity: 0; }
+        }
+
+        .modal-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 80%;
+            text-align: center;
+        }
+        
+        .modal-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal-btn:hover {
+            background-color: #3a80d2;
+        }
+        
+        .inventory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* レスポンシブデザイン用の調整 */
+        @media (max-width: 768px) {
+            .map-area {
+                flex-direction: column;
+            }
+            
+            .message-log {
+                min-height: 150px;
+                max-height: 200px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ロゴを一番上に移動 -->
+    <div class="logo-header">
+        <img src="R_and_R_logo.png" alt="Ruins & Revenant Logo" class="logo-image">
+    </div>
+    
+    <!-- 通常のテキストタイトルは非表示にしているが、SEO対策として残す -->
+    <h1 class="game-title">Ruins & Revenant～失われた王冠の伝説</h1>
+    
+    <div class="game-container">
+        <div class="game-header">
+            <div class="status-box hp">HP: <span id="player-hp">20</span>/<span id="player-max-hp">20</span></div>
+            <div class="status-box attack">攻撃: <span id="player-attack">5</span></div>
+            <div class="status-box defense">防御: <span id="player-defense">2</span></div>
+            <div class="status-box floor">階層: <span id="current-floor">1</span></div>
+        </div>
+        
+        <div class="game-info">
+            <div>プレイヤー: @　壁: #　モンスター: M　アイテム: I　階段: >　王冠: C　不明: ?</div>
+        </div>
+        
+        <!-- マップとメッセージログを横並びにする -->
+        <div class="map-area">
+            <div class="game-grid" id="game-grid"></div>
+            <!-- メッセージログをマップの右側に移動 -->
+            <div class="message-log" id="message-log">
+                <div>ダンジョンに入りました。探索を始めましょう。</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-row">
+                <button class="control-btn" id="move-nw">↖</button>
+                <button class="control-btn" id="move-n">↑</button>
+                <button class="control-btn" id="move-ne">↗</button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" id="move-w">←</button>
+                <button class="control-btn" id="move-wait">・</button>
+                <button class="control-btn" id="move-e">→</button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" id="move-sw">↙</button>
+                <button class="control-btn" id="move-s">↓</button>
+                <button class="control-btn" id="move-se">↘</button>
+            </div>
+        </div>
+        
+        <button class="inventory-btn" id="inventory-btn">インベントリ</button>
+    </div>
+    
+    <div class="modal" id="death-modal">
+        <div class="modal-content">
+            <h2>ゲームオーバー</h2>
+            <p>あなたは死亡しました。</p>
+            <p>到達階層: <span id="death-floor">0</span></p>
+            <button class="modal-btn" id="restart-btn">リスタート</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="win-modal">
+        <div class="modal-content">
+            <h2>勝利！</h2>
+            <p>あなたはダンジョンの最深部に到達し、冒険を成功させました！</p>
+            <p>到達階層: <span id="win-floor">0</span></p>
+            <button class="modal-btn" id="win-restart-btn">リスタート</button>
+        </div>
+    </div>
+    
+    <div class="inventory-modal" id="inventory-modal">
+        <div class="inventory-content">
+            <h2>インベントリ</h2>
+            <div id="inventory-list"></div>
+            <button class="modal-btn" id="close-inventory-btn">閉じる</button>
+        </div>
+    </div>
+    
+    <div class="battle-modal" id="battle-modal">
+        <div class="battle-content">
+            <div class="battle-header">
+                <div class="battle-entity player-battle">
+                    <h3>プレイヤー</h3>
+                    <p>HP: <span id="battle-player-hp">20</span>/<span id="battle-player-max-hp">20</span></p>
+                    <p>攻撃: <span id="battle-player-attack">5</span></p>
+                    <p>防御: <span id="battle-player-defense">2</span></p>
+                </div>
+                <div class="battle-entity monster-battle">
+                    <h3>モンスター: <span id="battle-monster-name">敵</span></h3>
+                    <div class="monster-image-container" id="monster-image-container">
+                        <!-- モンスター画像はここに動的に挿入されます -->
+                    </div>
+                    <p>HP: <span id="battle-monster-hp">10</span>/<span id="battle-monster-max-hp">10</span></p>
+                    <p>攻撃: <span id="battle-monster-attack">3</span></p>
+                    <p>防御: <span id="battle-monster-defense">1</span></p>
+                </div>
+            </div>
+            
+            <div class="battle-log" id="battle-log"></div>
+            
+            <div class="battle-actions">
+                <button class="battle-btn" id="attack-btn">攻撃 [F]</button>
+                <button class="battle-btn" id="defend-btn">防御 [G]</button>
+                <button class="battle-btn" id="flee-btn">逃げる [R]</button>
+            </div>
+            
+            <div class="battle-hint">
+                <p>キーボードショートカット: F = 攻撃 | G = 防御 | R = 逃げる</p>
+            </div>
+            
+            <div class="battle-result" id="battle-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // ゲーム全体の状態
+        const gameState = {
+            grid: [],
+            gridSize: 15,
+            visibilityMap: [], // 可視性マップ（現在の視界）
+            memoryMap: [],     // 記憶マップ（過去に見た場所）
+            player: {
+                x: 0,
+                y: 0,
+                hp: 20,
+                maxHp: 20,
+                attack: 5,
+                defense: 2,
+                inventory: []
+            },
+            monsters: [],
+            items: [],
+            currentFloor: 1,
+            maxFloor: 10,
+            stairs: { x: 0, y: 0 },
+            currentMonster: null,
+            isDefending: false
+        };
+
+        // モンスターの種類とレベルごとの基本ステータス
+        const monsterTypes = [
+            { name: "スライム", baseHp: 8, baseAttack: 3, baseDefense: 1, symbol: "S" },
+            { name: "ゴブリン", baseHp: 12, baseAttack: 4, baseDefense: 2, symbol: "G" },
+            { name: "オーク", baseHp: 18, baseAttack: 6, baseDefense: 3, symbol: "O" },
+            { name: "スケルトン", baseHp: 15, baseAttack: 7, baseDefense: 2, symbol: "K" },
+            { name: "ゾンビ", baseHp: 22, baseAttack: 5, baseDefense: 4, symbol: "Z" },
+            { name: "バンパイア", baseHp: 25, baseAttack: 8, baseDefense: 3, symbol: "V" },
+            { name: "レヴナント", baseHp: 35, baseAttack: 10, baseDefense: 5, symbol: "R" }
+        ];
+
+        // アイテムの種類
+        const itemTypes = [
+            { type: "heal", name: "回復薬", value: 10, symbol: "H" },
+            { type: "heal", name: "上級回復薬", value: 20, symbol: "H" },
+            { type: "weapon", name: "短剣", attackBonus: 2, symbol: "W" },
+            { type: "weapon", name: "長剣", attackBonus: 4, symbol: "W" },
+            { type: "armor", name: "革の鎧", defenseBonus: 2, symbol: "A" },
+            { type: "armor", name: "鉄の鎧", defenseBonus: 3, symbol: "A" },
+            { type: "armor", name: "プレートアーマー", defenseBonus: 5, symbol: "A" },
+            { type: "weapon", name: "戦斧", attackBonus: 6, symbol: "W" }
+        ];
+
+        // モンスターSVGを格納するオブジェクト
+        const monsterSVGs = {
+            slime: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M8 18 L8 22 L10 24 L22 24 L24 22 L24 18 L20 14 L12 14 Z" fill="#5D9CEC" />
+                <path d="M11 16 L13 16 L13 18 L11 18 Z" fill="#89B9FF" />
+                <path d="M19 16 L21 16 L21 18 L19 18 Z" fill="#89B9FF" />
+                <circle cx="12" cy="19" r="1.5" fill="black" />
+                <circle cx="20" cy="19" r="1.5" fill="black" />
+                <path d="M14 21 L18 21 L18 22 L14 22 Z" fill="#3A5696" />
+            </svg>`,
+            
+            goblin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M14 22 L14 24 L18 24 L18 22 L19 22 L20 20 L20 16 L12 16 L12 20 L13 22 Z" fill="#8CC152" />
+                <path d="M12 16 L12 12 L14 10 L18 10 L20 12 L20 16 Z" fill="#8CC152" />
+                <path d="M12 14 L10 12 L10 14 Z" fill="#8CC152" />
+                <path d="M20 14 L22 12 L22 14 Z" fill="#8CC152" />
+                <path d="M12 16 L10 18 L8 18 L8 20 L10 20 L12 18 Z" fill="#8CC152" />
+                <path d="M20 16 L22 18 L24 18 L24 20 L22 20 L20 18 Z" fill="#8CC152" />
+                <rect x="13" y="13" width="2" height="2" fill="#E9573F" />
+                <rect x="17" y="13" width="2" height="2" fill="#E9573F" />
+                <path d="M15 17 L17 17 L17 19 L15 19 Z" fill="#656D78" />
+                <path d="M15 17 L15 18 L16 18 Z" fill="white" />
+                <path d="M17 17 L17 18 L16 18 Z" fill="white" />
+            </svg>`,
+            
+            orc: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M10 24 L22 24 L22 20 L24 16 L24 12 L20 8 L12 8 L8 12 L8 16 L10 20 Z" fill="#A0D468" />
+                <path d="M12 24 L12 16 L14 14 L18 14 L20 16 L20 24 Z" fill="#656D78" />
+                <path d="M12 20 L20 20 L20 22 L12 22 Z" fill="#8C7757" />
+                <circle cx="13" cy="12" r="1.5" fill="#FC6E51" />
+                <circle cx="19" cy="12" r="1.5" fill="#FC6E51" />
+                <path d="M14 15 L18 15 L18 17 L14 17 Z" fill="#656D78" />
+                <path d="M14 15 L14 16 L15 16 Z" fill="white" />
+                <path d="M18 15 L18 16 L17 16 Z" fill="white" />
+                <path d="M14 8 L18 8 L20 10 L12 10 Z" fill="#656D78" />
+                <path d="M24 20 L28 16 L26 14 L22 18 Z" fill="#CCD1D9" />
+                <path d="M22 18 L24 20 L24 24 L22 22 Z" fill="#967ADC" />
+            </svg>`,
+            
+            skeleton: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M12 8 L20 8 L22 10 L22 14 L20 16 L12 16 L10 14 L10 10 Z" fill="#F5F7FA" />
+                <rect x="12" y="12" width="3" height="2" fill="black" />
+                <rect x="17" y="12" width="3" height="2" fill="black" />
+                <rect x="15" y="14" width="2" height="1" fill="black" />
+                <path d="M12 22 L20 22 L20 24 L16 26 L12 24 Z" fill="#F5F7FA" />
+                <path d="M14 16 L18 16 L18 22 L14 22 Z" fill="#F5F7FA" />
+                <path d="M14 18 L18 18" stroke="#E6E9ED" stroke-width="1" />
+                <path d="M14 20 L18 20" stroke="#E6E9ED" stroke-width="1" />
+                <path d="M14 16 L10 20 L8 24" stroke="#F5F7FA" stroke-width="2" fill="none" />
+                <path d="M18 16 L22 20 L24 24" stroke="#F5F7FA" stroke-width="2" fill="none" />
+                <path d="M14 24 L12 28" stroke="#F5F7FA" stroke-width="2" fill="none" />
+                <path d="M18 24 L20 28" stroke="#F5F7FA" stroke-width="2" fill="none" />
+                <path d="M24 24 L28 20 L26 18 L22 22 Z" fill="#CCD1D9" />
+                <path d="M22 22 L24 24 L24 26 L22 24 Z" fill="#AAB2BD" />
+            </svg>`,
+            
+            zombie: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M10 16 L10 20 L12 22 L12 24 L20 24 L20 22 L22 20 L22 16 L20 14 L12 14 L10 16 Z" fill="#A0D468" />
+                <path d="M12 8 L20 8 L22 10 L22 14 L20 16 L12 16 L10 14 L10 10 Z" fill="#A0D468" />
+                <circle cx="14" cy="12" r="1.5" fill="white" />
+                <circle cx="18" cy="12" r="1.5" fill="white" />
+                <circle cx="14" cy="12" r="0.75" fill="black" />
+                <circle cx="18" cy="12" r="0.75" fill="black" />
+                <path d="M14 14 L18 14 L18 15 L14 15 Z" fill="#ED5565" />
+                <path d="M10 16 L8 18 L6 20 L6 22 L8 22 L10 20 Z" fill="#A0D468" />
+                <path d="M22 16 L24 18 L26 20 L26 22 L24 22 L22 20 Z" fill="#A0D468" />
+                <path d="M16 8 L16 10" stroke="#ED5565" stroke-width="1" />
+                <path d="M20 12 L22 12" stroke="#ED5565" stroke-width="1" />
+                <path d="M10 22 L12 22" stroke="#ED5565" stroke-width="1" />
+                <path d="M12 16 L12 20 L14 20 L14 18 L16 18 L16 20 L18 20 L18 18 L20 18 L20 16 Z" fill="#656D78" />
+            </svg>`,
+            
+            vampire: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M8 16 L8 24 L12 28 L20 28 L24 24 L24 16 L28 20 L28 12 L24 8 L8 8 L4 12 L4 20 Z" fill="#656D78" />
+                <rect x="12" y="16" width="8" height="8" fill="#ED5565" />
+                <path d="M12 8 L12 16 L20 16 L20 8 Z" fill="#FFCE54" />
+                <path d="M12 8 L20 8 L20 10 L12 10 Z" fill="black" />
+                <path d="M12 8 L12 12 L10 10 Z" fill="black" />
+                <path d="M20 8 L20 12 L22 10 Z" fill="black" />
+                <circle cx="14" cy="12" r="1" fill="#FC6E51" />
+                <circle cx="18" cy="12" r="1" fill="#FC6E51" />
+                <path d="M14 14 L18 14 L18 15 L14 15 Z" fill="#FC6E51" />
+                <path d="M14 14 L14 16 L15 15 Z" fill="white" />
+                <path d="M18 14 L18 16 L17 15 Z" fill="white" />
+                <path d="M12 16 L8 16 L8 20 L10 20 L12 18 Z" fill="#FFCE54" />
+                <path d="M20 16 L24 16 L24 20 L22 20 L20 18 Z" fill="#FFCE54" />
+            </svg>`,
+            
+            revenant: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M10 16 L10 24 L12 26 L20 26 L22 24 L22 16 L20 14 L12 14 Z" fill="#656D78" />
+                <path d="M10 16 L8 14 L8 18 L10 20 Z" fill="#AAB2BD" />
+                <path d="M22 16 L24 14 L24 18 L22 20 Z" fill="#AAB2BD" />
+                <path d="M12 8 L20 8 L22 10 L22 14 L20 16 L12 16 L10 14 L10 10 Z" fill="#AAB2BD" />
+                <path d="M12 8 L10 6 L12 4 L14 6 Z" fill="#AAB2BD" />
+                <path d="M20 8 L22 6 L20 4 L18 6 Z" fill="#AAB2BD" />
+                <circle cx="14" cy="12" r="1.5" fill="#AC92EC" />
+                <circle cx="18" cy="12" r="1.5" fill="#AC92EC" />
+                <path d="M14 14 L18 14 L16 15 Z" fill="black" />
+                <path d="M10 20 L8 22 L8 26 L10 24 Z" fill="#656D78" />
+                <path d="M22 20 L24 22 L24 26 L22 24 Z" fill="#656D78" />
+                <path d="M6 14 L8 12 L6 10" stroke="#AC92EC" stroke-width="1" fill="none" />
+                <path d="M26 14 L24 12 L26 10" stroke="#AC92EC" stroke-width="1" fill="none" />
+                <path d="M12 4 L14 2 L16 4 L18 2 L20 4" stroke="#AC92EC" stroke-width="1" fill="none" />
+                <path d="M8 26 L6 28 L4 26 L6 24 Z" fill="#CCD1D9" />
+                <path d="M6 24 L8 26 L8 28 L6 26 Z" fill="#AAB2BD" />
+            </svg>`
+        };
+
+        // DOM要素
+        const gameGrid = document.getElementById('game-grid');
+        const messageLog = document.getElementById('message-log');
+        const playerHpEl = document.getElementById('player-hp');
+        const playerMaxHpEl = document.getElementById('player-max-hp');
+        const playerAttackEl = document.getElementById('player-attack');
+        const playerDefenseEl = document.getElementById('player-defense');
+        const currentFloorEl = document.getElementById('current-floor');
+        const deathModal = document.getElementById('death-modal');
+        const deathFloorEl = document.getElementById('death-floor');
+        const restartBtn = document.getElementById('restart-btn');
+        const winModal = document.getElementById('win-modal');
+        const winFloorEl = document.getElementById('win-floor');
+        const winRestartBtn = document.getElementById('win-restart-btn');
+        const inventoryBtn = document.getElementById('inventory-btn');
+        const inventoryModal = document.getElementById('inventory-modal');
+        const inventoryList = document.getElementById('inventory-list');
+        const closeInventoryBtn = document.getElementById('close-inventory-btn');
+        const battleModal = document.getElementById('battle-modal');
+        const battlePlayerHpEl = document.getElementById('battle-player-hp');
+        const battlePlayerMaxHpEl = document.getElementById('battle-player-max-hp');
+        const battlePlayerAttackEl = document.getElementById('battle-player-attack');
+        const battlePlayerDefenseEl = document.getElementById('battle-player-defense');
+        const battleMonsterNameEl = document.getElementById('battle-monster-name');
+        const battleMonsterHpEl = document.getElementById('battle-monster-hp');
+        const battleMonsterMaxHpEl = document.getElementById('battle-monster-max-hp');
+        const battleMonsterAttackEl = document.getElementById('battle-monster-attack');
+        const battleMonsterDefenseEl = document.getElementById('battle-monster-defense');
+        const battleLogEl = document.getElementById('battle-log');
+        const attackBtn = document.getElementById('attack-btn');
+        const defendBtn = document.getElementById('defend-btn');
+        const fleeBtn = document.getElementById('flee-btn');
+        const battleResultEl = document.getElementById('battle-result');
+
+        // 移動ボタン
+        const moveNWBtn = document.getElementById('move-nw');
+        const moveNBtn = document.getElementById('move-n');
+        const moveNEBtn = document.getElementById('move-ne');
+        const moveWBtn = document.getElementById('move-w');
+        const moveWaitBtn = document.getElementById('move-wait');
+        const moveEBtn = document.getElementById('move-e');
+        const moveSWBtn = document.getElementById('move-sw');
+        const moveSBtn = document.getElementById('move-s');
+        const moveSEBtn = document.getElementById('move-se');
+
+        // モンスターのシンボルからタイプ名に変換する関数
+        function getMonsterTypeFromSymbol(symbol) {
+            switch(symbol) {
+                case 'S': return 'slime';
+                case 'G': return 'goblin';
+                case 'O': return 'orc';
+                case 'K': return 'skeleton';
+                case 'Z': return 'zombie';
+                case 'V': return 'vampire';
+                case 'R': return 'revenant';
+                default: return 'slime'; // デフォルト
+            }
+        }
+
+        // プレイヤー周辺の可視性を更新
+        function updateVisibility() {
+            // 視界範囲 (プレイヤーを中心に5x5)
+            const visionRadius = 2; // 半径2で5x5になる (中心から上下左右に2マス)
+            
+            // まず最初にすべてのマスを不可視にリセット
+            for (let y = 0; y < gameState.gridSize; y++) {
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    gameState.visibilityMap[y][x] = false;
+                }
+            }
+            
+            // プレイヤーの周囲を可視に設定
+            for (let dy = -visionRadius; dy <= visionRadius; dy++) {
+                for (let dx = -visionRadius; dx <= visionRadius; dx++) {
+                    const x = gameState.player.x + dx;
+                    const y = gameState.player.y + dy;
+                    
+                    // グリッド内かチェック
+                    if (x >= 0 && y >= 0 && x < gameState.gridSize && y < gameState.gridSize) {
+                        gameState.visibilityMap[y][x] = true;
+                        
+                        // 壁の場合は記憶に残す
+                        if (gameState.grid[y][x] === 'wall') {
+                            gameState.memoryMap[y][x] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ゲームの初期化
+        function initGame() {
+            // プレイヤーの初期化
+            gameState.player = {
+                x: 0,
+                y: 0,
+                hp: 20,
+                maxHp: 20,
+                attack: 5,
+                defense: 2,
+                inventory: []
+            };
+            
+            gameState.currentFloor = 1;
+            
+            // 可視性マップと記憶マップの初期化
+            gameState.visibilityMap = Array(gameState.gridSize).fill().map(() => Array(gameState.gridSize).fill(false));
+            gameState.memoryMap = Array(gameState.gridSize).fill().map(() => Array(gameState.gridSize).fill(false));
+            
+            // UIの更新
+            updatePlayerStats();
+            
+            // 最初のフロアを生成
+            generateFloor();
+        }
+
+        // プレイヤーのステータス更新
+        function updatePlayerStats() {
+            playerHpEl.textContent = gameState.player.hp;
+            playerMaxHpEl.textContent = gameState.player.maxHp;
+            playerAttackEl.textContent = gameState.player.attack;
+            playerDefenseEl.textContent = gameState.player.defense;
+            currentFloorEl.textContent = gameState.currentFloor;
+        }
+
+        // メッセージログにメッセージを追加
+        function addMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageLog.appendChild(messageElement);
+            messageLog.scrollTop = messageLog.scrollHeight;
+        }
+
+        // グリッドを生成（経路確保版）
+        function generateGrid() {
+            gameState.grid = [];
+            gameState.visibilityMap = [];
+            gameState.memoryMap = [];
+            
+            // 空のグリッドを作成
+            for (let y = 0; y < gameState.gridSize; y++) {
+                const row = [];
+                const visRow = [];
+                const memRow = [];
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    // 外周は壁にする
+                    if (x === 0 || y === 0 || x === gameState.gridSize - 1 || y === gameState.gridSize - 1) {
+                        row.push('wall');
+                    } else {
+                        // 最初は全て空きマスにする（後で壁を配置）
+                        row.push('empty');
+                    }
+                    // 初期状態ではすべてのマスを非表示に
+                    visRow.push(false);
+                    memRow.push(false);
+                }
+                gameState.grid.push(row);
+                gameState.visibilityMap.push(visRow);
+                gameState.memoryMap.push(memRow);
+            }
+            
+            // プレイヤーの初期位置（左上の安全な場所）
+            const startX = 1;
+            const startY = 1;
+            gameState.player.x = startX;
+            gameState.player.y = startY;
+            
+            // 階段の配置（右下エリア）
+            const endX = gameState.gridSize - 2;
+            const endY = gameState.gridSize - 2;
+            
+            // 最終フロアの場合は王冠を配置
+            const symbol = gameState.currentFloor === gameState.maxFloor ? 'crown' : 'stairs';
+            gameState.stairs = { x: endX, y: endY };
+            
+            // 始点から終点への経路を確保
+            ensurePath(startX, startY, endX, endY);
+            
+            // 経路以外の場所にランダムに壁を配置
+            addRandomWalls();
+            
+            // プレイヤーと階段(王冠)を配置
+            gameState.grid[startY][startX] = 'player';
+            gameState.grid[endY][endX] = symbol;
+            
+            // モンスターの配置
+            placeMonsters();
+            
+            // アイテムの配置
+            placeItems();
+        }
+
+        // 始点から終点への経路を確保する関数
+        function ensurePath(startX, startY, endX, endY) {
+            // 単純な経路生成（水平→垂直移動）
+            let currentX = startX;
+            let currentY = startY;
+            
+            // 水平方向に移動（横移動を先に行う）
+            while (currentX !== endX) {
+                currentX += Math.sign(endX - currentX);
+                // この経路上のマスを空きマスとして確保
+                gameState.grid[currentY][currentX] = 'path'; // 一時的に'path'としてマーク
+            }
+            
+            // 垂直方向に移動
+            while (currentY !== endY) {
+                currentY += Math.sign(endY - currentY);
+                // この経路上のマスを空きマスとして確保
+                gameState.grid[currentY][currentX] = 'path'; // 一時的に'path'としてマーク
+            }
+            
+            // フロアレベルに応じて経路をさらに複雑にする
+            addComplexity(startX, startY, endX, endY, gameState.currentFloor);
+            
+            // 'path'を'empty'に変換
+            for (let y = 0; y < gameState.gridSize; y++) {
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    if (gameState.grid[y][x] === 'path') {
+                        gameState.grid[y][x] = 'empty';
+                    }
+                }
+            }
+        }
+
+        // 経路に複雑さを追加する関数
+        function addComplexity(startX, startY, endX, endY, floorLevel) {
+            // フロアレベルに応じて追加する経路の数を決定
+            const additionalPaths = Math.min(2 + Math.floor(floorLevel / 2), 5);
+            
+            for (let i = 0; i < additionalPaths; i++) {
+                // ランダムな中間点を選択
+                const midX = Math.floor(Math.random() * (gameState.gridSize - 4)) + 2;
+                const midY = Math.floor(Math.random() * (gameState.gridSize - 4)) + 2;
+                
+                // 既存の経路上のランダムな点を選択
+                let pathX = startX, pathY = startY;
+                
+                // 既存の経路上のランダムな点を探す
+                const points = [];
+                for (let y = 0; y < gameState.gridSize; y++) {
+                    for (let x = 0; x < gameState.gridSize; x++) {
+                        if (gameState.grid[y][x] === 'path') {
+                            points.push({x, y});
+                        }
+                    }
+                }
+                
+                if (points.length > 0) {
+                    const randomPoint = points[Math.floor(Math.random() * points.length)];
+                    pathX = randomPoint.x;
+                    pathY = randomPoint.y;
+                    
+                    // 中間点への経路を作成
+                    let currentX = pathX;
+                    let currentY = pathY;
+                    
+                    // ランダムに水平か垂直かを決定
+                    if (Math.random() < 0.5) {
+                        // 水平→垂直
+                        while (currentX !== midX) {
+                            currentX += Math.sign(midX - currentX);
+                            gameState.grid[currentY][currentX] = 'path';
+                        }
+                        
+                        while (currentY !== midY) {
+                            currentY += Math.sign(midY - currentY);
+                            gameState.grid[currentY][currentX] = 'path';
+                        }
+                    } else {
+                        // 垂直→水平
+                        while (currentY !== midY) {
+                            currentY += Math.sign(midY - currentY);
+                            gameState.grid[currentY][currentX] = 'path';
+                        }
+                        
+                        while (currentX !== midX) {
+                            currentX += Math.sign(midX - currentX);
+                            gameState.grid[currentY][currentX] = 'path';
+                        }
+                    }
+                }
+            }
+        }
+
+        // 経路以外の場所にランダムに壁を配置
+        function addRandomWalls() {
+            // フロアレベルに応じて壁の密度を調整
+            const wallDensity = 0.2 + (gameState.currentFloor / 50); // 最大で0.4程度
+            
+            for (let y = 1; y < gameState.gridSize - 1; y++) {
+                for (let x = 1; x < gameState.gridSize - 1; x++) {
+                    // 経路上のマス（path）でなければ、ランダムに壁を配置
+                    if (gameState.grid[y][x] === 'empty' && Math.random() < wallDensity) {
+                        gameState.grid[y][x] = 'wall';
+                    }
+                }
+            }
+            
+            // プレイヤーの初期位置の周辺は壁にしない（移動の自由度を確保）
+            clearAreaAroundPlayer();
+        }
+
+        // プレイヤーの初期位置周辺をクリアにする関数
+        function clearAreaAroundPlayer() {
+            const clearRadius = 1; // プレイヤーの周囲1マスをクリア
+            
+            for (let dy = -clearRadius; dy <= clearRadius; dy++) {
+                for (let dx = -clearRadius; dx <= clearRadius; dx++) {
+                    const x = gameState.player.x + dx;
+                    const y = gameState.player.y + dy;
+                    
+                    // グリッド内かチェック
+                    if (x > 0 && y > 0 && x < gameState.gridSize - 1 && y < gameState.gridSize - 1) {
+                        // 壁の場合は空きマスに変更
+                        if (gameState.grid[y][x] === 'wall') {
+                            gameState.grid[y][x] = 'empty';
+                        }
+                    }
+                }
+            }
+        }
+
+        // 階段の配置
+        function placeStairs() {
+            const x = gameState.gridSize - 2;
+            const y = gameState.gridSize - 2;
+            
+            // 最終フロアの場合は王冠を配置
+            const symbol = gameState.currentFloor === gameState.maxFloor ? 'crown' : 'stairs';
+            
+            if (gameState.grid[y][x] === 'empty') {
+                gameState.grid[y][x] = symbol;
+                gameState.stairs = { x, y };
+            } else {
+                // 階段/王冠の位置が埋まっている場合は周辺を探す
+                for (let i = x - 2; i <= x; i++) {
+                    for (let j = y - 2; j <= y; j++) {
+                        if (i > 0 && j > 0 && i < gameState.gridSize - 1 && j < gameState.gridSize - 1) {
+                            if (gameState.grid[j][i] === 'empty') {
+                                gameState.grid[j][i] = symbol;
+                                gameState.stairs = { x: i, y: j };
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // モンスターの配置
+        function placeMonsters() {
+            gameState.monsters = [];
+            
+            // フロアレベルに応じたモンスター数を決定
+            const monsterCount = 5 + Math.floor(gameState.currentFloor / 2);
+            
+            for (let i = 0; i < monsterCount; i++) {
+                let x, y;
+                let attempts = 0;
+                
+                // 空きマスを探す
+                do {
+                    x = Math.floor(Math.random() * (gameState.gridSize - 2)) + 1;
+                    y = Math.floor(Math.random() * (gameState.gridSize - 2)) + 1;
+                    attempts++;
+                    
+                    // 無限ループ防止
+                    if (attempts > 100) break;
+                } while (
+                    gameState.grid[y][x] !== 'empty' ||
+                    (Math.abs(x - gameState.player.x) < 3 && Math.abs(y - gameState.player.y) < 3)
+                );
+                
+                if (attempts <= 100) {
+                    // モンスタータイプをランダムに選択
+                    const typeIndex = Math.min(
+                        Math.floor(Math.random() * monsterTypes.length),
+                        Math.floor(gameState.currentFloor / 2)
+                    );
+                    
+                    const monsterType = monsterTypes[typeIndex];
+                    
+                    // フロアレベルに応じて強さを調整
+                    const floorFactor = 1 + (gameState.currentFloor - 1) * 0.2;
+                    
+                    const monster = {
+                        x,
+                        y,
+                        type: typeIndex,
+                        name: monsterType.name,
+                        hp: Math.floor(monsterType.baseHp * floorFactor),
+                        maxHp: Math.floor(monsterType.baseHp * floorFactor),
+                        attack: Math.floor(monsterType.baseAttack * floorFactor),
+                        defense: Math.floor(monsterType.baseDefense * floorFactor),
+                        symbol: monsterType.symbol
+                    };
+                    
+                    gameState.monsters.push(monster);
+                    gameState.grid[y][x] = 'monster';
+                }
+            }
+        }
+
+        // アイテムの配置
+        function placeItems() {
+            gameState.items = [];
+            
+            // フロアレベルに応じたアイテム数を決定
+            const itemCount = 3 + Math.floor(gameState.currentFloor / 3);
+            
+            for (let i = 0; i < itemCount; i++) {
+                let x, y;
+                let attempts = 0;
+                
+                // 空きマスを探す
+                do {
+                    x = Math.floor(Math.random() * (gameState.gridSize - 2)) + 1;
+                    y = Math.floor(Math.random() * (gameState.gridSize - 2)) + 1;
+                    attempts++;
+                    
+                    // 無限ループ防止
+                    if (attempts > 100) break;
+                } while (gameState.grid[y][x] !== 'empty');
+                
+                if (attempts <= 100) {
+                    // アイテムタイプをランダムに選択
+                    const typeIndex = Math.min(
+                        Math.floor(Math.random() * itemTypes.length),
+                        Math.floor(gameState.currentFloor / 2)
+                    );
+                    
+                    const itemType = itemTypes[typeIndex];
+                    const item = { ...itemType, x, y };
+                    
+                    // フロアレベルに応じて強さを調整
+                    if (item.type === 'heal') {
+                        item.value = 10 + gameState.currentFloor * 2;
+                    } else if (item.type === 'weapon') {
+                        item.attackBonus = Math.floor(item.attackBonus * (1 + (gameState.currentFloor - 1) * 0.1));
+                    } else if (item.type === 'armor') {
+                        item.defenseBonus = Math.floor(item.defenseBonus * (1 + (gameState.currentFloor - 1) * 0.1));
+                    }
+                    
+                    gameState.items.push(item);
+                    gameState.grid[y][x] = 'item';
+                }
+            }
+        }
+
+        // 経路の到達可能性を検証する関数
+        function validatePath() {
+            // 幅優先探索で始点から終点までの経路が存在するか確認
+            const visited = Array(gameState.gridSize).fill().map(() => Array(gameState.gridSize).fill(false));
+            const queue = [{x: gameState.player.x, y: gameState.player.y}];
+            visited[gameState.player.y][gameState.player.x] = true;
+            
+            const directions = [
+                {dx: 0, dy: -1}, // 上
+                {dx: 1, dy: 0},  // 右
+                {dx: 0, dy: 1},  // 下
+                {dx: -1, dy: 0}, // 左
+                {dx: -1, dy: -1}, // 左上
+                {dx: 1, dy: -1},  // 右上
+                {dx: -1, dy: 1},  // 左下
+                {dx: 1, dy: 1}    // 右下
+            ];
+            
+            while (queue.length > 0) {
+                const current = queue.shift();
+                
+                // 終点に到達したか確認
+                if (current.x === gameState.stairs.x && current.y === gameState.stairs.y) {
+                    return true; // 経路が存在する
+                }
+                
+                // 隣接するマスを探索
+                for (const dir of directions) {
+                    const nextX = current.x + dir.dx;
+                    const nextY = current.y + dir.dy;
+                    
+                    // グリッド内かつ未訪問かつ通行可能なマスか確認
+                    if (
+                        nextX >= 0 && nextY >= 0 && 
+                        nextX < gameState.gridSize && nextY < gameState.gridSize &&
+                        !visited[nextY][nextX] && 
+                        gameState.grid[nextY][nextX] !== 'wall'
+                    ) {
+                        visited[nextY][nextX] = true;
+                        queue.push({x: nextX, y: nextY});
+                    }
+                }
+            }
+            
+            return false; // 経路が存在しない
+        }
+
+        // シンプルなグリッドを生成（確実に経路が存在する）
+        function generateSimpleGrid() {
+            gameState.grid = [];
+            gameState.visibilityMap = [];
+            gameState.memoryMap = [];
+            
+            // 空のグリッドを作成
+            for (let y = 0; y < gameState.gridSize; y++) {
+                const row = [];
+                const visRow = [];
+                const memRow = [];
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    // 外周は壁にする
+                    if (x === 0 || y === 0 || x === gameState.gridSize - 1 || y === gameState.gridSize - 1) {
+                        row.push('wall');
+                    } else {
+                        // 内部は基本的に空きマス
+                        row.push('empty');
+                    }
+                    visRow.push(false);
+                    memRow.push(false);
+                }
+                gameState.grid.push(row);
+                gameState.visibilityMap.push(visRow);
+                gameState.memoryMap.push(memRow);
+            }
+            
+            // 少しだけ壁を配置（十字パターン）
+            const center = Math.floor(gameState.gridSize / 2);
+            for (let i = 1; i < gameState.gridSize - 1; i++) {
+                if (i !== 1 && i !== gameState.gridSize - 2 && i !== center) {
+                    gameState.grid[i][center] = 'wall'; // 縦の壁
+                    gameState.grid[center][i] = 'wall'; // 横の壁
+                }
+            }
+            
+            // プレイヤーの配置
+            gameState.player.x = 1;
+            gameState.player.y = 1;
+            gameState.grid[gameState.player.y][gameState.player.x] = 'player';
+            
+            // 階段/王冠の配置
+            const endX = gameState.gridSize - 2;
+            const endY = gameState.gridSize - 2;
+            const symbol = gameState.currentFloor === gameState.maxFloor ? 'crown' : 'stairs';
+            gameState.grid[endY][endX] = symbol;
+            gameState.stairs = { x: endX, y: endY };
+            
+            // モンスターの配置
+            placeMonsters();
+            
+            // アイテムの配置
+            placeItems();
+        }
+
+        // フロア生成関数の拡張（経路検証を追加）
+        function generateFloor() {
+            let pathExists = false;
+            let attempts = 0;
+            const maxAttempts = 5; // 最大試行回数
+            
+            while (!pathExists && attempts < maxAttempts) {
+                generateGrid();
+                pathExists = validatePath();
+                attempts++;
+            }
+            
+            // 全ての試行で経路が作成できなかった場合、確実に経路が存在するシンプルなマップを生成
+            if (!pathExists) {
+                generateSimpleGrid();
+            }
+            
+            updateVisibility(); // 可視性を更新
+            renderGrid();
+            addMessage(`フロア ${gameState.currentFloor} に入りました。`);
+        }
+
+        // グリッドの描画
+        function renderGrid() {
+            // グリッドをクリア
+            gameGrid.innerHTML = '';
+            
+            // グリッドを描画
+            for (let y = 0; y < gameState.gridSize; y++) {
+                for (let x = 0; x < gameState.gridSize; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    // マスが可視か記憶されているかチェック
+                    if (gameState.visibilityMap[y][x]) {
+                        // 現在の視界内
+                        switch (gameState.grid[y][x]) {
+                            case 'wall':
+                                cell.classList.add('wall');
+                                cell.textContent = '#';
+                                break;
+                            case 'player':
+                                cell.classList.add('player');
+                                cell.textContent = '@';
+                                break;
+                            case 'monster':
+                                cell.classList.add('monster');
+                                const monster = gameState.monsters.find(m => m.x === x && m.y === y);
+                                cell.textContent = monster ? monster.symbol : 'M';
+                                break;
+                            case 'item':
+                                cell.classList.add('item');
+                                const item = gameState.items.find(i => i.x === x && i.y === y);
+                                cell.textContent = item ? item.symbol : 'I';
+                                break;
+                            case 'stairs':
+                                cell.classList.add('stairs');
+                                cell.textContent = '>';
+                                break;
+                            case 'crown':
+                                cell.classList.add('crown');
+                                cell.textContent = 'C';
+                                break;
+                            case 'path': // 経路表示（デバッグ用）
+                                cell.classList.add('path');
+                                cell.textContent = '.';
+                                break;
+                            default:
+                                cell.textContent = '.';
+                                break;
+                        }
+                    } else if (gameState.memoryMap[y][x] && gameState.grid[y][x] === 'wall') {
+                        // 記憶している壁
+                        cell.classList.add('wall');
+                        cell.classList.add('remembered');
+                        cell.textContent = '#';
+                    } else {
+                        // 不可視のマスは「?」で表示
+                        cell.classList.add('hidden');
+                        cell.textContent = '?';
+                    }
+                    
+                    gameGrid.appendChild(cell);
+                }
+            }
+        }
+
+        // プレイヤーの移動処理
+        function movePlayer(dx, dy) {
+            const newX = gameState.player.x + dx;
+            const newY = gameState.player.y + dy;
+            
+            // 移動先がグリッド内かチェック
+            if (newX < 0 || newY < 0 || newX >= gameState.gridSize || newY >= gameState.gridSize) {
+                return false;
+            }
+            
+            // 移動先のタイプに応じた処理
+            switch (gameState.grid[newY][newX]) {
+                case 'wall':
+                    // 壁には移動できない
+                    return false;
+                
+                case 'monster':
+                    // モンスターとの戦闘
+                    const monster = gameState.monsters.find(m => m.x === newX && m.y === newY);
+                    if (monster) {
+                        initBattle(monster);
+                    }
+                    return false;
+                
+                case 'item':
+                    // アイテムの取得
+                    const item = gameState.items.find(i => i.x === newX && i.y === newY);
+                    if (item) {
+                        pickupItem(item);
+                        gameState.grid[newY][newX] = 'empty';
+                        gameState.items = gameState.items.filter(i => i.x !== newX || i.y !== newY);
+                    }
+                    break;
+                
+                case 'stairs':
+                    // 階段の場合は次のフロアへ
+                    if (gameState.currentFloor === gameState.maxFloor) {
+                        // 最終フロアの場合はゲームクリア
+                        winGame();
+                        return false;
+                    } else {
+                        gameState.currentFloor++;
+                        generateFloor();
+                        return false;
+                    }
+                
+                case 'crown':
+                    // 王冠の場合はゲームクリア
+                    winGame();
+                    return false;
+            }
+            
+            // 元の位置を空にする
+            gameState.grid[gameState.player.y][gameState.player.x] = 'empty';
+            
+            // 新しい位置に移動
+            gameState.player.x = newX;
+            gameState.player.y = newY;
+            gameState.grid[newY][newX] = 'player';
+            
+            // 視界の更新
+            updateVisibility();
+            
+            // モンスターの移動
+            moveMonsters();
+            
+            // 再描画
+            renderGrid();
+            
+            return true;
+        }
+
+        // モンスターの移動
+        function moveMonsters() {
+            for (const monster of gameState.monsters) {
+                // 簡単なAI: プレイヤーに近づく
+                const dx = Math.sign(gameState.player.x - monster.x);
+                const dy = Math.sign(gameState.player.y - monster.y);
+                
+                // ランダムに動くか、プレイヤーに向かうか決定
+                if (Math.random() < 0.7) {
+                    // プレイヤーの方向に動く
+                    let newX, newY;
+                    
+                    // 横か縦にランダムに動く
+                    if (Math.random() < 0.5 && dx !== 0) {
+                        newX = monster.x + dx;
+                        newY = monster.y;
+                    } else if (dy !== 0) {
+                        newX = monster.x;
+                        newY = monster.y + dy;
+                    } else {
+                        // プレイヤーと同じ座標の場合は動かない
+                        continue;
+}
+                    
+                    // 移動先がグリッド内かつ空きマスの場合のみ移動
+                    if (
+                        newX > 0 && newY > 0 && 
+                        newX < gameState.gridSize - 1 && newY < gameState.gridSize - 1 &&
+                        gameState.grid[newY][newX] === 'empty'
+                    ) {
+                        // 元の位置を空にする
+                        gameState.grid[monster.y][monster.x] = 'empty';
+                        
+                        // 新しい位置に移動
+                        monster.x = newX;
+                        monster.y = newY;
+                        gameState.grid[newY][newX] = 'monster';
+                        
+                        // プレイヤーの隣に移動した場合
+                        if (
+                            Math.abs(monster.x - gameState.player.x) <= 1 &&
+                            Math.abs(monster.y - gameState.player.y) <= 1
+                        ) {
+                            addMessage(`${monster.name}があなたに接近しました！`);
+                        }
+                    }
+                }
+            }
+        }
+
+        // アイテムを拾う
+        function pickupItem(item) {
+            if (item.type === 'heal') {
+                addMessage(`${item.name}を使用しました。HPが${item.value}回復しました。`);
+                gameState.player.hp = Math.min(gameState.player.hp + item.value, gameState.player.maxHp);
+                updatePlayerStats();
+            } else {
+                addMessage(`${item.name}を拾いました。`);
+                gameState.player.inventory.push({ ...item });
+            }
+        }
+
+        // インベントリのアイテムを使用
+        function useItem(index) {
+            const item = gameState.player.inventory[index];
+            
+            if (!item) return;
+            
+            if (item.type === 'heal') {
+                addMessage(`${item.name}を使用しました。HPが${item.value}回復しました。`);
+                gameState.player.hp = Math.min(gameState.player.hp + item.value, gameState.player.maxHp);
+            } else if (item.type === 'weapon') {
+                addMessage(`${item.name}を装備しました。攻撃力が${item.attackBonus}上昇しました。`);
+                gameState.player.attack += item.attackBonus;
+            } else if (item.type === 'armor') {
+                addMessage(`${item.name}を装備しました。防御力が${item.defenseBonus}上昇しました。`);
+                gameState.player.defense += item.defenseBonus;
+            }
+            
+            // アイテムをインベントリから削除
+            gameState.player.inventory.splice(index, 1);
+            
+            // UIを更新
+            updatePlayerStats();
+            showInventory();
+        }
+
+        // インベントリを表示
+        function showInventory() {
+            inventoryList.innerHTML = '';
+            
+            if (gameState.player.inventory.length === 0) {
+                const emptyItem = document.createElement('div');
+                emptyItem.className = 'inventory-item';
+                emptyItem.textContent = 'インベントリは空です';
+                inventoryList.appendChild(emptyItem);
+            } else {
+                gameState.player.inventory.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'inventory-item';
+                    
+                    let description;
+                    if (item.type === 'heal') {
+                        description = `${item.name} (HP+${item.value})`;
+                    } else if (item.type === 'weapon') {
+                        description = `${item.name} (攻撃+${item.attackBonus})`;
+                    } else if (item.type === 'armor') {
+                        description = `${item.name} (防御+${item.defenseBonus})`;
+                    }
+                    
+                    const itemText = document.createElement('div');
+                    itemText.textContent = description;
+                    
+                    const useButton = document.createElement('button');
+                    useButton.className = 'use-btn';
+                    useButton.textContent = '使用';
+                    useButton.addEventListener('click', () => useItem(index));
+                    
+                    itemElement.appendChild(itemText);
+                    itemElement.appendChild(useButton);
+                    
+                    inventoryList.appendChild(itemElement);
+                });
+            }
+            
+            inventoryModal.style.display = 'flex';
+        }
+
+        // モンスターの攻撃アニメーション
+        function playMonsterAttackAnimation() {
+            const monsterContainer = document.getElementById('monster-image-container');
+            const svg = monsterContainer.querySelector('svg');
+            
+            if (svg) {
+                svg.classList.add('monster-attack');
+                
+                // アニメーション終了後にクラスを削除
+                setTimeout(() => {
+                    svg.classList.remove('monster-attack');
+                }, 500);
+            }
+        }
+
+        // モンスターへの攻撃アニメーション
+        function playMonsterHitAnimation() {
+            const monsterContainer = document.getElementById('monster-image-container');
+            const svg = monsterContainer.querySelector('svg');
+            
+            if (svg) {
+                svg.classList.add('monster-hit');
+                
+                // アニメーション終了後にクラスを削除
+                setTimeout(() => {
+                    svg.classList.remove('monster-hit');
+                }, 500);
+            }
+        }
+
+        // モンスター撃破アニメーション
+        function playMonsterDefeatAnimation() {
+            const monsterContainer = document.getElementById('monster-image-container');
+            const svg = monsterContainer.querySelector('svg');
+            
+            if (svg) {
+                svg.classList.add('monster-defeat');
+            }
+        }
+
+        // 戦闘の初期化
+        function initBattle(monster) {
+            gameState.currentMonster = { ...monster };
+            gameState.isDefending = false;
+            
+            // 戦闘UI更新
+            battlePlayerHpEl.textContent = gameState.player.hp;
+            battlePlayerMaxHpEl.textContent = gameState.player.maxHp;
+            battlePlayerAttackEl.textContent = gameState.player.attack;
+            battlePlayerDefenseEl.textContent = gameState.player.defense;
+            
+            battleMonsterNameEl.textContent = monster.name;
+            battleMonsterHpEl.textContent = monster.hp;
+            battleMonsterMaxHpEl.textContent = monster.maxHp;
+            battleMonsterAttackEl.textContent = monster.attack;
+            battleMonsterDefenseEl.textContent = monster.defense;
+            
+            // モンスター画像を表示
+            const monsterType = getMonsterTypeFromSymbol(monster.symbol);
+            const monsterImageContainer = document.getElementById('monster-image-container');
+            monsterImageContainer.innerHTML = monsterSVGs[monsterType] || '';
+            
+            // 戦闘ログクリア
+            battleLogEl.innerHTML = '';
+            battleResultEl.textContent = '';
+            
+            // ログの初期メッセージ
+            addBattleLog(`${monster.name}との戦闘が始まりました！`);
+            
+            // 戦闘モーダルを表示
+            battleModal.style.display = 'flex';
+        }
+
+        // 戦闘ログにメッセージを追加
+        function addBattleLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = message;
+            battleLogEl.appendChild(logEntry);
+            battleLogEl.scrollTop = battleLogEl.scrollHeight;
+        }
+
+        // プレイヤーの攻撃
+        function playerAttack() {
+            if (!gameState.currentMonster) return;
+            
+            // 攻撃計算
+            const damage = Math.max(1, gameState.player.attack - gameState.currentMonster.defense);
+            gameState.currentMonster.hp -= damage;
+            
+            // ログ表示
+            addBattleLog(`あなたの攻撃！${gameState.currentMonster.name}に${damage}ダメージ！`);
+            
+            // モンスターのHPを更新
+            battleMonsterHpEl.textContent = Math.max(0, gameState.currentMonster.hp);
+            
+            // 攻撃アニメーション
+            playMonsterHitAnimation();
+            
+            // モンスターが倒れたか確認
+            if (gameState.currentMonster.hp <= 0) {
+                setTimeout(() => {
+                    monsterDefeated();
+                }, 600);
+            } else {
+                // モンスターの反撃
+                setTimeout(() => {
+                    monsterAttack();
+                }, 800);
+            }
+        }
+
+        // 防御
+        function playerDefend() {
+            gameState.isDefending = true;
+            addBattleLog('あなたは防御の構えをとりました。次の攻撃のダメージが半減します。');
+            
+            // モンスターの攻撃
+            setTimeout(monsterAttack, 500);
+        }
+
+        // 逃げる
+        function tryFlee() {
+            // 逃げる成功確率（70%）
+            if (Math.random() < 0.7) {
+                addBattleLog('うまく逃げ出した！');
+                
+                setTimeout(() => {
+                    battleModal.style.display = 'none';
+                    gameState.currentMonster = null;
+                }, 1000);
+            } else {
+                addBattleLog('逃げるのに失敗した！');
+                
+                // モンスターの攻撃（逃げ失敗ペナルティ）
+                setTimeout(monsterAttack, 500);
+            }
+        }
+
+        // モンスターの攻撃
+        function monsterAttack() {
+            if (!gameState.currentMonster) return;
+            
+            // 攻撃アニメーション
+            playMonsterAttackAnimation();
+            
+            // 攻撃計算
+            let damage = Math.max(1, gameState.currentMonster.attack - gameState.player.defense);
+            
+            // 防御中は半減
+            if (gameState.isDefending) {
+                damage = Math.floor(damage / 2);
+                gameState.isDefending = false;
+                addBattleLog('防御により、ダメージが半減しました！');
+            }
+            
+            gameState.player.hp -= damage;
+            
+            // ログ表示
+            addBattleLog(`${gameState.currentMonster.name}の攻撃！あなたに${damage}ダメージ！`);
+            
+            // プレイヤーのHPを更新
+            battlePlayerHpEl.textContent = Math.max(0, gameState.player.hp);
+            playerHpEl.textContent = Math.max(0, gameState.player.hp);
+            
+            // プレイヤーが倒れたか確認
+            if (gameState.player.hp <= 0) {
+                setTimeout(() => {
+                    gameOver();
+                }, 500);
+            }
+        }
+
+        // モンスターを倒した
+        function monsterDefeated() {
+            const monster = gameState.currentMonster;
+            
+            // 撃破アニメーション
+            playMonsterDefeatAnimation();
+            
+            addBattleLog(`${monster.name}を倒しました！`);
+            
+            // 報酬決定
+            const rewards = getMonsterRewards(monster);
+            
+            // 報酬表示
+            if (rewards.hp > 0) {
+                gameState.player.maxHp += rewards.hp;
+                addBattleLog(`最大HPが${rewards.hp}増加しました！`);
+            }
+            
+            if (rewards.attack > 0) {
+                gameState.player.attack += rewards.attack;
+                addBattleLog(`攻撃力が${rewards.attack}増加しました！`);
+            }
+            
+            if (rewards.defense > 0) {
+                gameState.player.defense += rewards.defense;
+                addBattleLog(`防御力が${rewards.defense}増加しました！`);
+            }
+            
+            // UIの更新
+            updatePlayerStats();
+            
+            // 勝利表示
+            battleResultEl.textContent = '勝利！';
+            
+            // モンスターをマップから削除
+            const foundMonster = gameState.monsters.find(
+                m => m.x === monster.x && m.y === monster.y
+            );
+            
+            if (foundMonster) {
+                gameState.grid[foundMonster.y][foundMonster.x] = 'empty';
+                gameState.monsters = gameState.monsters.filter(
+                    m => m.x !== monster.x || m.y !== monster.y
+                );
+            }
+            
+            // グリッドを再描画
+            renderGrid();
+            
+            // 戦闘終了（アニメーションの後に）
+            setTimeout(() => {
+                battleModal.style.display = 'none';
+                gameState.currentMonster = null;
+                
+                // メッセージログにも追加
+                addMessage(`${monster.name}を倒しました！`);
+            }, 2000);
+        }
+
+        // モンスターの報酬を決定
+        function getMonsterRewards(monster) {
+            const floorFactor = 1 + (gameState.currentFloor - 1) * 0.1;
+            
+            // モンスターの種類と強さに応じて報酬を調整
+            const rewards = {
+                hp: 0,
+                attack: 0,
+                defense: 0
+            };
+            
+            // 最大HP増加（35%の確率）
+            if (Math.random() < 0.35) {
+                rewards.hp = Math.floor(1 + monster.type * floorFactor);
+            }
+            
+            // 攻撃力増加（30%の確率）
+            if (Math.random() < 0.3) {
+                rewards.attack = Math.floor(1 + (monster.type * 0.5) * floorFactor);
+            }
+            
+            // 防御力増加（30%の確率）
+            if (Math.random() < 0.3) {
+                rewards.defense = Math.floor(1 + (monster.type * 0.3) * floorFactor);
+            }
+            
+            return rewards;
+        }
+
+        // ゲームオーバー
+        function gameOver() {
+            battleResultEl.textContent = '敗北...';
+            
+            // 少し待ってからゲームオーバーモーダルを表示
+            setTimeout(() => {
+                battleModal.style.display = 'none';
+                deathFloorEl.textContent = gameState.currentFloor;
+                deathModal.style.display = 'flex';
+            }, 2000);
+        }
+
+        // ゲームクリア
+        function winGame() {
+            winFloorEl.textContent = gameState.currentFloor;
+            winModal.style.display = 'flex';
+        }
+
+        // イベントリスナー
+        moveNWBtn.addEventListener('click', () => movePlayer(-1, -1));
+        moveNBtn.addEventListener('click', () => movePlayer(0, -1));
+        moveNEBtn.addEventListener('click', () => movePlayer(1, -1));
+        moveWBtn.addEventListener('click', () => movePlayer(-1, 0));
+        moveWaitBtn.addEventListener('click', () => {
+            addMessage('その場で一息つきました。');
+            moveMonsters();
+            updateVisibility(); // 可視性更新を追加
+            renderGrid();
+        });
+        moveEBtn.addEventListener('click', () => movePlayer(1, 0));
+        moveSWBtn.addEventListener('click', () => movePlayer(-1, 1));
+        moveSBtn.addEventListener('click', () => movePlayer(0, 1));
+        moveSEBtn.addEventListener('click', () => movePlayer(1, 1));
+
+        // インベントリボタン
+        inventoryBtn.addEventListener('click', showInventory);
+        closeInventoryBtn.addEventListener('click', () => {
+            inventoryModal.style.display = 'none';
+        });
+
+        // 戦闘ボタン
+        attackBtn.addEventListener('click', playerAttack);
+        defendBtn.addEventListener('click', playerDefend);
+        fleeBtn.addEventListener('click', tryFlee);
+
+        // リスタートボタン
+        restartBtn.addEventListener('click', () => {
+            deathModal.style.display = 'none';
+            initGame();
+        });
+
+        // 勝利リスタートボタン
+        winRestartBtn.addEventListener('click', () => {
+            winModal.style.display = 'none';
+            initGame();
+        });
+
+        // キーボード操作の拡張
+        document.addEventListener('keydown', (e) => {
+            // 戦闘モーダルが表示されているか確認
+            const isBattleActive = battleModal.style.display === 'flex';
+            
+            if (isBattleActive) {
+                // 戦闘中のキー操作
+                switch (e.key) {
+                    case 'f':  // 攻撃 (Fight)
+                        playerAttack();
+                        break;
+                    case 'g':  // 防御 (Guard)
+                        playerDefend();
+                        break;
+                    case 'r':  // 逃げる (Run)
+                        tryFlee();
+                        break;
+                }
+                return; // 戦闘中は移動キーを無効化
+            }
+            
+            // 通常の移動操作（既存のコード）
+            switch (e.key) {
+                case 'ArrowUp':
+                case 'w':
+                    movePlayer(0, -1);
+                    break;
+                case 'ArrowDown':
+                case 's':
+                    movePlayer(0, 1);
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                    movePlayer(-1, 0);
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                    movePlayer(1, 0);
+                    break;
+                case 'q':
+                    movePlayer(-1, -1);
+                    break;
+                case 'e':
+                    movePlayer(1, -1);
+                    break;
+                case 'z':
+                    movePlayer(-1, 1);
+                    break;
+                case 'c':
+                    movePlayer(1, 1);
+                    break;
+                case 'x':
+                    // その場で待機
+                    addMessage('その場で一息つきました。');
+                    moveMonsters();
+                    updateVisibility(); // 可視性更新を追加
+                    renderGrid();
+                    break;
+                case 'i':
+                    // インベントリ表示
+                    showInventory();
+                    break;
+            }
+        });
+
+        // ゲーム開始
+        initGame();
+    </script>
+</body>
+</html>
