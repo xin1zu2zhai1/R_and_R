@@ -21,12 +21,13 @@
         .logo-header {
             margin-bottom: 20px;
             text-align: center;
-            max-width: 300px; /* ロゴの最大幅を小さく */
+            max-width: 300px;
+            display: block; /* 画像表示用に復活 */
         }
         
         .logo-image {
             max-width: 100%;
-            width: 300px; /* ロゴの幅を指定 */
+            width: 300px;
             height: auto;
         }
         
@@ -35,14 +36,22 @@
             margin-bottom: 20px;
             color: #ffcc00;
             text-shadow: 2px 2px 4px #000;
-            display: none; /* タイトルを非表示にし、画像ロゴを使用 */
+            text-align: center;
+            display: none; /* ロゴ画像があるためテキストタイトルは非表示 */
+            line-height: 1.4;
+        }
+
+        .game-subtitle {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            display: block;
         }
         
         .game-container {
             display: flex;
             flex-direction: column;
             max-width: 800px;
-            width: 100%;
+            width: 95%; /* スマホ向けに少し調整 */
         }
         
         .game-header {
@@ -52,6 +61,8 @@
             background-color: #222;
             padding: 10px;
             border-radius: 5px;
+            flex-wrap: wrap; /* スマホで折り返し */
+            gap: 5px;
         }
         
         .game-info {
@@ -59,6 +70,7 @@
             background-color: #222;
             padding: 10px;
             border-radius: 5px;
+            font-size: 0.9rem;
         }
         
         /* マップエリアを横並びに */
@@ -78,18 +90,21 @@
             padding: 10px;
             border-radius: 5px;
             flex-shrink: 0;
+            margin: 0 auto; /* 中央寄せ */
         }
         
         /* メッセージログをマップの横に配置 */
         .message-log {
             flex: 1;
             height: auto;
-            max-height: 470px; /* マップの高さに合わせる（15行 x 30px + パディングとギャップ） */
+            max-height: 470px; /* マップの高さに合わせる */
             overflow-y: auto;
             background-color: #222;
             padding: 10px;
             border-radius: 5px;
             min-width: 200px;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
         
         .cell {
@@ -102,6 +117,7 @@
             background-color: #333;
             color: white;
             user-select: none;
+            font-size: 14px;
         }
         
         .wall {
@@ -147,8 +163,8 @@
         }
         
         .control-btn {
-            width: 40px;
-            height: 40px;
+            width: 50px; /* 少し大きくして押しやすく */
+            height: 50px;
             margin: 0 5px;
             background-color: #444;
             border: 1px solid #666;
@@ -156,16 +172,27 @@
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation; /* ダブルタップズーム防止 */
         }
         
         .control-btn:hover {
             background-color: #555;
         }
         
+        .control-btn:active {
+            background-color: #666;
+            transform: translateY(2px);
+        }
+        
         .status-box {
             padding: 5px 10px;
             border-radius: 3px;
-            margin-right: 10px;
+            margin-right: 0;
+            white-space: nowrap;
         }
         
         .hp {
@@ -182,6 +209,8 @@
         
         .floor {
             background-color: #e2c94a;
+            color: #333;
+            font-weight: bold;
         }
         
         .modal {
@@ -210,6 +239,7 @@
         .inventory-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 8px;
             margin: 5px 0;
             background-color: #444;
@@ -233,10 +263,13 @@
             background-color: #444;
             color: white;
             border: 1px solid #666;
-            padding: 5px 10px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 200px;
+            align-self: center;
         }
         
         .inventory-btn:hover {
@@ -250,7 +283,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.85);
             z-index: 10;
             justify-content: center;
             align-items: center;
@@ -262,46 +295,56 @@
             border-radius: 5px;
             max-width: 500px;
             width: 90%;
+            border: 1px solid #555;
         }
         
         .battle-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
+            gap: 10px;
         }
         
         .battle-entity {
             text-align: center;
             padding: 10px;
             border-radius: 5px;
-            width: 45%;
+            width: 48%;
+            box-sizing: border-box;
         }
         
         .player-battle {
-            background-color: #4a90e2;
+            background-color: #2c5282; /* 少し暗めの青 */
+            border: 1px solid #4a90e2;
         }
         
         .monster-battle {
-            background-color: #e25a4a;
+            background-color: #822c2c; /* 少し暗めの赤 */
+            border: 1px solid #e25a4a;
         }
         
         .battle-log {
             height: 150px;
             overflow-y: auto;
             margin: 15px 0;
-            background-color: #222;
+            background-color: #1a1a1a;
             padding: 10px;
             border-radius: 5px;
+            border: 1px solid #444;
+            font-size: 0.9rem;
         }
         
         .battle-btn {
             background-color: #4a90e2;
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 20px;
             margin: 5px;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+            min-width: 80px;
         }
         
         .battle-btn:hover {
@@ -312,30 +355,41 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        #flee-btn {
+            background-color: #e2a04a;
+        }
+        
+        #defend-btn {
+            background-color: #4ae25a;
+            color: #000;
         }
         
         .battle-result {
             margin-top: 15px;
             font-weight: bold;
             color: #ffcc00;
+            text-align: center;
+            font-size: 1.2rem;
+            min-height: 1.5em;
         }
 
         .remembered {
-            opacity: 0.6;
+            opacity: 0.3;
         }
         
         .battle-hint {
             margin-top: 10px;
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: #aaa;
             text-align: center;
             padding: 5px;
-            border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.2);
         }
 
         .path {
-            background-color: #486e29; /* デバッグ用 */
+            /* background-color: #486e29; デバッグ用、通常は非表示 */
         }
         
         .monster-image-container {
@@ -353,6 +407,7 @@
             width: 80px;
             height: 80px;
             transition: transform 0.3s ease-in-out;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
         }
 
         .monster-attack {
@@ -362,6 +417,14 @@
         .monster-hit {
             animation: monsterHitAnim 0.5s ease-in-out;
         }
+        
+        .monster-dodge {
+            animation: monsterDodgeAnim 0.5s ease-in-out;
+        }
+        
+        .player-dodge {
+            /* 画面全体が一瞬揺れるなどの演出ができればよいが、今回はログとSEのみでも可 */
+        }
 
         .monster-defeat {
             animation: monsterDefeatAnim 1s ease-in-out forwards;
@@ -369,18 +432,25 @@
 
         @keyframes monsterAttackAnim {
             0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(5px) rotate(-5deg); }
+            25% { transform: translateX(-20px) scale(1.1); }
+            50% { transform: translateX(10px) rotate(-5deg); }
             75% { transform: translateX(-5px) rotate(5deg); }
             100% { transform: translateX(0); }
         }
 
         @keyframes monsterHitAnim {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(10px); }
-            50% { transform: translateX(-5px); }
+            0% { transform: translateX(0); filter: brightness(1); }
+            25% { transform: translateX(10px); filter: brightness(2) sepia(1) hue-rotate(-50deg) saturate(5); } /* 赤く光る */
+            50% { transform: translateX(-10px); }
             75% { transform: translateX(5px); }
-            100% { transform: translateX(0); }
+            100% { transform: translateX(0); filter: brightness(1); }
+        }
+        
+        @keyframes monsterDodgeAnim {
+            0% { transform: translateX(0); opacity: 1; }
+            25% { transform: translateX(30px); opacity: 0.5; } /* 素早く横に動いて薄くなる */
+            50% { transform: translateX(-10px); opacity: 0.5; }
+            100% { transform: translateX(0); opacity: 1; }
         }
 
         @keyframes monsterDefeatAnim {
@@ -394,11 +464,13 @@
 
         .modal-content {
             background-color: #333;
-            padding: 20px;
-            border-radius: 5px;
+            padding: 30px;
+            border-radius: 10px;
             max-width: 400px;
             width: 80%;
             text-align: center;
+            border: 2px solid #555;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
         
         .modal-btn {
@@ -409,6 +481,7 @@
             margin-top: 15px;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 1.1rem;
         }
         
         .modal-btn:hover {
@@ -432,24 +505,33 @@
         @media (max-width: 768px) {
             .map-area {
                 flex-direction: column;
+                align-items: center;
             }
             
             .message-log {
-                min-height: 150px;
-                max-height: 200px;
+                width: 100%;
+                min-height: 100px;
+                max-height: 150px;
                 margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+            
+            .game-grid {
+                /* スマホ画面に合わせてサイズ調整 */
+                transform-origin: top center;
+            }
+            
+            .game-header {
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ロゴを一番上に移動 -->
+    <!-- ロゴ画像を復活 -->
     <div class="logo-header">
         <img src="R_and_R_logo.png" alt="Ruins & Revenant Logo" class="logo-image">
     </div>
-    
-    <!-- 通常のテキストタイトルは非表示にしているが、SEO対策として残す -->
-    <h1 class="game-title">Ruins & Revenant～失われた王冠の伝説</h1>
     
     <div class="game-container">
         <div class="game-header">
@@ -460,7 +542,7 @@
         </div>
         
         <div class="game-info">
-            <div>プレイヤー: @　壁: #　モンスター: M　アイテム: I　階段: >　王冠: C　不明: ?</div>
+            <div>プレイヤー: @　壁: #　敵: M　物: I　階段: ></div>
         </div>
         
         <!-- マップとメッセージログを横並びにする -->
@@ -468,7 +550,7 @@
             <div class="game-grid" id="game-grid"></div>
             <!-- メッセージログをマップの右側に移動 -->
             <div class="message-log" id="message-log">
-                <div>ダンジョンに入りました。探索を始めましょう。</div>
+                <div style="color: #ffd700;">★ダンジョンに入りました。探索を始めましょう。</div>
             </div>
         </div>
         
@@ -490,24 +572,24 @@
             </div>
         </div>
         
-        <button class="inventory-btn" id="inventory-btn">インベントリ</button>
+        <button class="inventory-btn" id="inventory-btn">インベントリ [I]</button>
     </div>
     
     <div class="modal" id="death-modal">
         <div class="modal-content">
-            <h2>ゲームオーバー</h2>
-            <p>あなたは死亡しました。</p>
+            <h2 style="color: #e25a4a;">GAME OVER</h2>
+            <p>あなたはダンジョンの露と消えました...</p>
             <p>到達階層: <span id="death-floor">0</span></p>
-            <button class="modal-btn" id="restart-btn">リスタート</button>
+            <button class="modal-btn" id="restart-btn">リトライ</button>
         </div>
     </div>
     
     <div class="modal" id="win-modal">
         <div class="modal-content">
-            <h2>勝利！</h2>
-            <p>あなたはダンジョンの最深部に到達し、冒険を成功させました！</p>
+            <h2 style="color: #ffd700;">CONGRATULATIONS!</h2>
+            <p>あなたは「失われた王冠」を手に入れ、<br>無事に生還しました！</p>
             <p>到達階層: <span id="win-floor">0</span></p>
-            <button class="modal-btn" id="win-restart-btn">リスタート</button>
+            <button class="modal-btn" id="win-restart-btn">最初から遊ぶ</button>
         </div>
     </div>
     
@@ -523,19 +605,17 @@
         <div class="battle-content">
             <div class="battle-header">
                 <div class="battle-entity player-battle">
-                    <h3>プレイヤー</h3>
+                    <h3>YOU</h3>
                     <p>HP: <span id="battle-player-hp">20</span>/<span id="battle-player-max-hp">20</span></p>
-                    <p>攻撃: <span id="battle-player-attack">5</span></p>
-                    <p>防御: <span id="battle-player-defense">2</span></p>
+                    <p>攻: <span id="battle-player-attack">5</span> / 防: <span id="battle-player-defense">2</span></p>
                 </div>
                 <div class="battle-entity monster-battle">
-                    <h3>モンスター: <span id="battle-monster-name">敵</span></h3>
+                    <h3><span id="battle-monster-name">敵</span></h3>
                     <div class="monster-image-container" id="monster-image-container">
                         <!-- モンスター画像はここに動的に挿入されます -->
                     </div>
                     <p>HP: <span id="battle-monster-hp">10</span>/<span id="battle-monster-max-hp">10</span></p>
-                    <p>攻撃: <span id="battle-monster-attack">3</span></p>
-                    <p>防御: <span id="battle-monster-defense">1</span></p>
+                    <p>攻: <span id="battle-monster-attack">3</span> / 防: <span id="battle-monster-defense">1</span></p>
                 </div>
             </div>
             
@@ -548,7 +628,7 @@
             </div>
             
             <div class="battle-hint">
-                <p>キーボードショートカット: F = 攻撃 | G = 防御 | R = 逃げる</p>
+                <p>ショートカット: F=攻撃 | G=防御 | R=逃走</p>
             </div>
             
             <div class="battle-result" id="battle-result"></div>
@@ -556,6 +636,86 @@
     </div>
 
     <script>
+        // --- サウンド管理 (Web Audio API) ---
+        const SoundManager = {
+            audioCtx: null,
+            
+            init: function() {
+                if (!this.audioCtx) {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+            },
+            
+            // 攻撃ヒット音（ザシュッ！）
+            playHit: function() {
+                this.init();
+                const t = this.audioCtx.currentTime;
+                
+                // オシレーター（音源）
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                
+                // ノコギリ波で鋭い音に
+                osc.type = 'sawtooth';
+                
+                // 周波数を急激に下げて打撃感を出す
+                osc.frequency.setValueAtTime(150, t);
+                osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.1);
+                
+                // 音量エンベロープ（アタックとリリース）
+                gain.gain.setValueAtTime(0.3, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+                
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                
+                osc.start(t);
+                osc.stop(t + 0.1);
+                
+                // 低音の衝撃音も重ねる
+                const osc2 = this.audioCtx.createOscillator();
+                const gain2 = this.audioCtx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(50, t);
+                osc2.frequency.exponentialRampToValueAtTime(0.01, t + 0.1);
+                gain2.gain.setValueAtTime(0.3, t);
+                gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+                osc2.connect(gain2);
+                gain2.connect(this.audioCtx.destination);
+                osc2.start(t);
+                osc2.stop(t + 0.1);
+            },
+            
+            // 攻撃ミス音（ヒュンッ！）
+            playMiss: function() {
+                this.init();
+                const t = this.audioCtx.currentTime;
+                
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                
+                // 三角波で風切り音っぽく
+                osc.type = 'triangle';
+                
+                // 高い音から急降下
+                osc.frequency.setValueAtTime(800, t);
+                osc.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+                
+                // 音量は控えめに
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.linearRampToValueAtTime(0, t + 0.15);
+                
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                
+                osc.start(t);
+                osc.stop(t + 0.15);
+            }
+        };
+
         // ゲーム全体の状態
         const gameState = {
             grid: [],
@@ -594,7 +754,7 @@
         // アイテムの種類
         const itemTypes = [
             { type: "heal", name: "回復薬", value: 10, symbol: "H" },
-            { type: "heal", name: "上級回復薬", value: 20, symbol: "H" },
+            { type: "heal", name: "上級回復薬", value: 25, symbol: "H" },
             { type: "weapon", name: "短剣", attackBonus: 2, symbol: "W" },
             { type: "weapon", name: "長剣", attackBonus: 4, symbol: "W" },
             { type: "armor", name: "革の鎧", defenseBonus: 2, symbol: "A" },
@@ -840,6 +1000,7 @@
         function addMessage(message) {
             const messageElement = document.createElement('div');
             messageElement.textContent = message;
+            messageElement.style.marginBottom = "4px";
             messageLog.appendChild(messageElement);
             messageLog.scrollTop = messageLog.scrollHeight;
         }
@@ -1465,7 +1626,7 @@
                             Math.abs(monster.x - gameState.player.x) <= 1 &&
                             Math.abs(monster.y - gameState.player.y) <= 1
                         ) {
-                            addMessage(`${monster.name}があなたに接近しました！`);
+                            addMessage(`${monster.name}が接近！`);
                         }
                     }
                 }
@@ -1527,17 +1688,18 @@
                     if (item.type === 'heal') {
                         description = `${item.name} (HP+${item.value})`;
                     } else if (item.type === 'weapon') {
-                        description = `${item.name} (攻撃+${item.attackBonus})`;
+                        description = `${item.name} (攻+${item.attackBonus})`;
                     } else if (item.type === 'armor') {
-                        description = `${item.name} (防御+${item.defenseBonus})`;
+                        description = `${item.name} (防+${item.defenseBonus})`;
                     }
                     
                     const itemText = document.createElement('div');
                     itemText.textContent = description;
+                    itemText.style.color = "#eee";
                     
                     const useButton = document.createElement('button');
                     useButton.className = 'use-btn';
-                    useButton.textContent = '使用';
+                    useButton.textContent = '使用/装備';
                     useButton.addEventListener('click', () => useItem(index));
                     
                     itemElement.appendChild(itemText);
@@ -1580,6 +1742,20 @@
             }
         }
 
+        // モンスター回避アニメーション（新規追加）
+        function playMonsterDodgeAnimation() {
+            const monsterContainer = document.getElementById('monster-image-container');
+            const svg = monsterContainer.querySelector('svg');
+            
+            if (svg) {
+                svg.classList.add('monster-dodge');
+                
+                setTimeout(() => {
+                    svg.classList.remove('monster-dodge');
+                }, 500);
+            }
+        }
+
         // モンスター撃破アニメーション
         function playMonsterDefeatAnimation() {
             const monsterContainer = document.getElementById('monster-image-container');
@@ -1594,6 +1770,9 @@
         function initBattle(monster) {
             gameState.currentMonster = { ...monster };
             gameState.isDefending = false;
+            
+            // サウンドエンジンの初期化（ユーザー操作が必要なためここでも呼ぶ）
+            SoundManager.init();
             
             // 戦闘UI更新
             battlePlayerHpEl.textContent = gameState.player.hp;
@@ -1617,7 +1796,7 @@
             battleResultEl.textContent = '';
             
             // ログの初期メッセージ
-            addBattleLog(`${monster.name}との戦闘が始まりました！`);
+            addBattleLog(`${monster.name}が現れた！`);
             
             // 戦闘モーダルを表示
             battleModal.style.display = 'flex';
@@ -1627,44 +1806,66 @@
         function addBattleLog(message) {
             const logEntry = document.createElement('div');
             logEntry.textContent = message;
+            logEntry.style.marginBottom = "4px";
+            logEntry.style.borderBottom = "1px solid #333";
+            logEntry.style.paddingBottom = "2px";
             battleLogEl.appendChild(logEntry);
             battleLogEl.scrollTop = battleLogEl.scrollHeight;
         }
 
-        // プレイヤーの攻撃
+        // プレイヤーの攻撃（命中率の導入）
         function playerAttack() {
             if (!gameState.currentMonster) return;
             
-            // 攻撃計算
-            const damage = Math.max(1, gameState.player.attack - gameState.currentMonster.defense);
-            gameState.currentMonster.hp -= damage;
+            // 命中判定 (90%の確率で当たる)
+            const hitChance = 0.9;
+            const isHit = Math.random() < hitChance;
             
-            // ログ表示
-            addBattleLog(`あなたの攻撃！${gameState.currentMonster.name}に${damage}ダメージ！`);
-            
-            // モンスターのHPを更新
-            battleMonsterHpEl.textContent = Math.max(0, gameState.currentMonster.hp);
-            
-            // 攻撃アニメーション
-            playMonsterHitAnimation();
-            
-            // モンスターが倒れたか確認
-            if (gameState.currentMonster.hp <= 0) {
-                setTimeout(() => {
-                    monsterDefeated();
-                }, 600);
+            if (isHit) {
+                // 命中時の処理
+                const damage = Math.max(1, gameState.player.attack - gameState.currentMonster.defense);
+                gameState.currentMonster.hp -= damage;
+                
+                // ヒット音再生
+                SoundManager.playHit();
+                
+                // ログ表示
+                addBattleLog(`あなたの攻撃！${gameState.currentMonster.name}に${damage}ダメージ！`);
+                
+                // モンスターのHPを更新
+                battleMonsterHpEl.textContent = Math.max(0, gameState.currentMonster.hp);
+                
+                // 攻撃アニメーション
+                playMonsterHitAnimation();
+                
+                // モンスターが倒れたか確認
+                if (gameState.currentMonster.hp <= 0) {
+                    setTimeout(() => {
+                        monsterDefeated();
+                    }, 600);
+                    return; // 倒した場合は反撃なし
+                }
             } else {
-                // モンスターの反撃
-                setTimeout(() => {
-                    monsterAttack();
-                }, 800);
+                // ミス時の処理
+                // ミス音再生
+                SoundManager.playMiss();
+                
+                // 回避アニメーション
+                playMonsterDodgeAnimation();
+                
+                addBattleLog(`攻撃は${gameState.currentMonster.name}にかわされた！`);
             }
+            
+            // モンスターの反撃（ヒットしてもミスしても反撃は来る）
+            setTimeout(() => {
+                monsterAttack();
+            }, 800);
         }
 
         // 防御
         function playerDefend() {
             gameState.isDefending = true;
-            addBattleLog('あなたは防御の構えをとりました。次の攻撃のダメージが半減します。');
+            addBattleLog('防御の構えをとった！(被ダメージ半減)');
             
             // モンスターの攻撃
             setTimeout(monsterAttack, 500);
@@ -1674,6 +1875,7 @@
         function tryFlee() {
             // 逃げる成功確率（70%）
             if (Math.random() < 0.7) {
+                SoundManager.playMiss(); // 逃走時もスウィッシュ音
                 addBattleLog('うまく逃げ出した！');
                 
                 setTimeout(() => {
@@ -1681,44 +1883,62 @@
                     gameState.currentMonster = null;
                 }, 1000);
             } else {
-                addBattleLog('逃げるのに失敗した！');
+                addBattleLog('逃げられない！');
                 
                 // モンスターの攻撃（逃げ失敗ペナルティ）
                 setTimeout(monsterAttack, 500);
             }
         }
 
-        // モンスターの攻撃
+        // モンスターの攻撃（こちらも命中率を導入）
         function monsterAttack() {
             if (!gameState.currentMonster) return;
             
             // 攻撃アニメーション
             playMonsterAttackAnimation();
             
-            // 攻撃計算
-            let damage = Math.max(1, gameState.currentMonster.attack - gameState.player.defense);
+            // 命中判定 (85%の確率で当たる)
+            const hitChance = 0.85;
+            const isHit = Math.random() < hitChance;
             
-            // 防御中は半減
-            if (gameState.isDefending) {
-                damage = Math.floor(damage / 2);
-                gameState.isDefending = false;
-                addBattleLog('防御により、ダメージが半減しました！');
-            }
-            
-            gameState.player.hp -= damage;
-            
-            // ログ表示
-            addBattleLog(`${gameState.currentMonster.name}の攻撃！あなたに${damage}ダメージ！`);
-            
-            // プレイヤーのHPを更新
-            battlePlayerHpEl.textContent = Math.max(0, gameState.player.hp);
-            playerHpEl.textContent = Math.max(0, gameState.player.hp);
-            
-            // プレイヤーが倒れたか確認
-            if (gameState.player.hp <= 0) {
-                setTimeout(() => {
-                    gameOver();
-                }, 500);
+            if (isHit) {
+                // 攻撃計算
+                let damage = Math.max(1, gameState.currentMonster.attack - gameState.player.defense);
+                
+                // 防御中は半減
+                if (gameState.isDefending) {
+                    damage = Math.floor(damage / 2);
+                    // 完全防御の場合は1ダメージにするか0にするか、ここでは最低1は通す
+                    if (damage < 1) damage = 1;
+                    gameState.isDefending = false;
+                    
+                    // 防御成功音（キィン！みたいな音が出せればいいが、今回はHit音で代用）
+                    SoundManager.playHit();
+                    addBattleLog('ガード成功！ダメージを軽減した！');
+                } else {
+                    SoundManager.playHit();
+                }
+                
+                gameState.player.hp -= damage;
+                
+                // ログ表示
+                addBattleLog(`${gameState.currentMonster.name}の攻撃！${damage}のダメージを受けた！`);
+                
+                // プレイヤーのHPを更新
+                battlePlayerHpEl.textContent = Math.max(0, gameState.player.hp);
+                playerHpEl.textContent = Math.max(0, gameState.player.hp);
+                
+                // プレイヤーが倒れたか確認
+                if (gameState.player.hp <= 0) {
+                    setTimeout(() => {
+                        gameOver();
+                    }, 500);
+                }
+            } else {
+                // ミス時の処理
+                SoundManager.playMiss();
+                addBattleLog(`${gameState.currentMonster.name}の攻撃をひらりと回避した！`);
+                gameState.isDefending = false; // 回避した場合も防御状態は解除
             }
         }
 
@@ -1729,7 +1949,7 @@
             // 撃破アニメーション
             playMonsterDefeatAnimation();
             
-            addBattleLog(`${monster.name}を倒しました！`);
+            addBattleLog(`${monster.name}を倒した！`);
             
             // 報酬決定
             const rewards = getMonsterRewards(monster);
@@ -1737,24 +1957,24 @@
             // 報酬表示
             if (rewards.hp > 0) {
                 gameState.player.maxHp += rewards.hp;
-                addBattleLog(`最大HPが${rewards.hp}増加しました！`);
+                addBattleLog(`最大HPが${rewards.hp}アップ！`);
             }
             
             if (rewards.attack > 0) {
                 gameState.player.attack += rewards.attack;
-                addBattleLog(`攻撃力が${rewards.attack}増加しました！`);
+                addBattleLog(`攻撃力が${rewards.attack}アップ！`);
             }
             
             if (rewards.defense > 0) {
                 gameState.player.defense += rewards.defense;
-                addBattleLog(`防御力が${rewards.defense}増加しました！`);
+                addBattleLog(`防御力が${rewards.defense}アップ！`);
             }
             
             // UIの更新
             updatePlayerStats();
             
             // 勝利表示
-            battleResultEl.textContent = '勝利！';
+            battleResultEl.textContent = 'YOU WIN!';
             
             // モンスターをマップから削除
             const foundMonster = gameState.monsters.find(
@@ -1812,7 +2032,8 @@
 
         // ゲームオーバー
         function gameOver() {
-            battleResultEl.textContent = '敗北...';
+            battleResultEl.textContent = 'YOU DIED...';
+            battleResultEl.style.color = "#e25a4a";
             
             // 少し待ってからゲームオーバーモーダルを表示
             setTimeout(() => {
@@ -1834,7 +2055,7 @@
         moveNEBtn.addEventListener('click', () => movePlayer(1, -1));
         moveWBtn.addEventListener('click', () => movePlayer(-1, 0));
         moveWaitBtn.addEventListener('click', () => {
-            addMessage('その場で一息つきました。');
+            addMessage('その場で待機...');
             moveMonsters();
             updateVisibility(); // 可視性更新を追加
             renderGrid();
@@ -1875,20 +2096,23 @@
             if (isBattleActive) {
                 // 戦闘中のキー操作
                 switch (e.key) {
-                    case 'f':  // 攻撃 (Fight)
+                    case 'f':
+                    case 'F':
                         playerAttack();
                         break;
-                    case 'g':  // 防御 (Guard)
+                    case 'g':
+                    case 'G':
                         playerDefend();
                         break;
-                    case 'r':  // 逃げる (Run)
+                    case 'r':
+                    case 'R':
                         tryFlee();
                         break;
                 }
                 return; // 戦闘中は移動キーを無効化
             }
             
-            // 通常の移動操作（既存のコード）
+            // 通常の移動操作
             switch (e.key) {
                 case 'ArrowUp':
                 case 'w':
@@ -1920,12 +2144,13 @@
                     break;
                 case 'x':
                     // その場で待機
-                    addMessage('その場で一息つきました。');
+                    addMessage('その場で待機...');
                     moveMonsters();
-                    updateVisibility(); // 可視性更新を追加
+                    updateVisibility();
                     renderGrid();
                     break;
                 case 'i':
+                case 'I':
                     // インベントリ表示
                     showInventory();
                     break;
